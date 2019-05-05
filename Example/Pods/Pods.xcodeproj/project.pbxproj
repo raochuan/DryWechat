@@ -21,13 +21,13 @@
 
 /* Begin PBXBuildFile section */
 		0513032F3387C0A9D9C950599B634F02 /* DryWechat.h in Headers */ = {isa = PBXBuildFile; fileRef = 8123F87A581D8B80E6F6F421FACE351F /* DryWechat.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A24154569F579987742ADD3BF6650BD /* DryWechatMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = DA5CB5C1A1F54D47BF292FA4C1D7657A /* DryWechatMedia.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		28678CAA182EF8C71C8839DA560DF3CF /* Pods-DryWechat_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D0088E95F4B25AB197C185D2FCDCA7A /* Pods-DryWechat_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		31AB491C5EA6052E258234A9B1611C1E /* DryWechatMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FF08B5DA75E30FF00EDFBB81E4ED8B3 /* DryWechatMedia.m */; };
 		4343043CE4FB69917583BAF83A1137A3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
 		646F38CAF634C5AAEE371EA4B8183E93 /* Pods-DryWechat_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF3B345D814F73A08A13A557CB3472 /* Pods-DryWechat_Tests-dummy.m */; };
 		829A0BF4588BF4D4AA64CCC825144893 /* Pods-DryWechat_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F7A6968FEA03ABCEFF29C7EF89FB4941 /* Pods-DryWechat_Example-dummy.m */; };
 		8D09114A53A875DF25F8BCE7CD9CE414 /* DryWechat-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A74230A3467DE8AC305A83C426269E0 /* DryWechat-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9CA68FBC227F4A7900367268 /* DryWechatMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 9CA68FBA227F4A7900367268 /* DryWechatMedia.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9CA68FBD227F4A7900367268 /* DryWechatMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CA68FBB227F4A7900367268 /* DryWechatMedia.m */; };
 		A8D00E65EFCE4577262038C9B4BDDE8A /* DryWechat.m in Sources */ = {isa = PBXBuildFile; fileRef = 3666F57D10C7ACB8B3F775DFBE91647C /* DryWechat.m */; };
 		BD69CBEDB3D11FD8D34224E809CB7FA2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
 		C0E86613EB945B9987B8EE1646E6144D /* Pods-DryWechat_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 64441E1CA593BC6582CE84ACD2FCED24 /* Pods-DryWechat_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -82,20 +82,20 @@
 		64441E1CA593BC6582CE84ACD2FCED24 /* Pods-DryWechat_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-DryWechat_Example-umbrella.h"; sourceTree = "<group>"; };
 		681CA6C7D5CE6BC03BCA0CE8C75C191C /* Pods-DryWechat_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-DryWechat_Example-acknowledgements.plist"; sourceTree = "<group>"; };
 		6F7DC82E5B67817926DA021256040B52 /* WechatOpenSDK.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = WechatOpenSDK.xcconfig; sourceTree = "<group>"; };
-		6FF08B5DA75E30FF00EDFBB81E4ED8B3 /* DryWechatMedia.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DryWechatMedia.m; path = DryWechat/Classes/Code/Public/DryWechatMedia.m; sourceTree = "<group>"; };
 		7420450A4301CCEFDB118C3C04A43933 /* WXApiObject.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = WXApiObject.h; path = WeChatSDK1.8.4/WXApiObject.h; sourceTree = "<group>"; };
 		7C34F611ECD12B9256BC0FDD66473CE6 /* Pods-DryWechat_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-DryWechat_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
 		7E60DA87689A6BE8668400A82F88CB85 /* Pods-DryWechat_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DryWechat_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		8123F87A581D8B80E6F6F421FACE351F /* DryWechat.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DryWechat.h; path = DryWechat/Classes/Code/Public/DryWechat.h; sourceTree = "<group>"; };
 		87F3E787238F897F0C6E62679A724B72 /* Pods-DryWechat_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DryWechat_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		920C9FF553ACF30458A5BDE3EFDB1F49 /* Pods-DryWechat_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DryWechat_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		9CA68FBA227F4A7900367268 /* DryWechatMedia.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DryWechatMedia.h; path = DryWechat/Classes/Code/Public/DryWechatMedia.h; sourceTree = "<group>"; };
+		9CA68FBB227F4A7900367268 /* DryWechatMedia.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DryWechatMedia.m; path = DryWechat/Classes/Code/Public/DryWechatMedia.m; sourceTree = "<group>"; };
 		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		AC43E1131FC071ABBA50801902DB43C3 /* Pods-DryWechat_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DryWechat_Example.release.xcconfig"; sourceTree = "<group>"; };
 		AF9329D7ED54EDB15A0FDC44452FAA98 /* WechatAuthSDK.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = WechatAuthSDK.h; path = WeChatSDK1.8.4/WechatAuthSDK.h; sourceTree = "<group>"; };
 		B19BA2CE4E491EB93B21A62116E2F5C6 /* Pods_DryWechat_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DryWechat_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B256B4873A734934494AE90EE4A564C3 /* DryWechat-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "DryWechat-Info.plist"; sourceTree = "<group>"; };
 		CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		DA5CB5C1A1F54D47BF292FA4C1D7657A /* DryWechatMedia.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DryWechatMedia.h; path = DryWechat/Classes/Code/Public/DryWechatMedia.h; sourceTree = "<group>"; };
 		DC42158FDDF7CC1C0A708723FE77EA94 /* Pods-DryWechat_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-DryWechat_Tests.modulemap"; sourceTree = "<group>"; };
 		DDC974D2B30CAFC3BE24EBD35809E196 /* Pods-DryWechat_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-DryWechat_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		E039BA72137CC3C86A33E914E9076E59 /* Pods-DryWechat_Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-DryWechat_Tests-Info.plist"; sourceTree = "<group>"; };
@@ -141,8 +141,8 @@
 			children = (
 				8123F87A581D8B80E6F6F421FACE351F /* DryWechat.h */,
 				3666F57D10C7ACB8B3F775DFBE91647C /* DryWechat.m */,
-				DA5CB5C1A1F54D47BF292FA4C1D7657A /* DryWechatMedia.h */,
-				6FF08B5DA75E30FF00EDFBB81E4ED8B3 /* DryWechatMedia.m */,
+				9CA68FBA227F4A7900367268 /* DryWechatMedia.h */,
+				9CA68FBB227F4A7900367268 /* DryWechatMedia.m */,
 				715ED607F8239AE9C6CF58C7A1A3380D /* Pod */,
 				6C2D19F9F1861607C5770676CC9213AD /* Support Files */,
 			);
@@ -323,7 +323,7 @@
 			files = (
 				8D09114A53A875DF25F8BCE7CD9CE414 /* DryWechat-umbrella.h in Headers */,
 				0513032F3387C0A9D9C950599B634F02 /* DryWechat.h in Headers */,
-				1A24154569F579987742ADD3BF6650BD /* DryWechatMedia.h in Headers */,
+				9CA68FBC227F4A7900367268 /* DryWechatMedia.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,6 +396,11 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0930;
 				LastUpgradeCheck = 1020;
+				TargetAttributes = {
+					2E3FFF1224613F44028FB3A1109C2774 = {
+						LastSwiftMigration = 1020;
+					};
+				};
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -463,9 +468,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9CA68FBD227F4A7900367268 /* DryWechatMedia.m in Sources */,
 				D939362D9F338876E4385FADB8E2F7F3 /* DryWechat-dummy.m in Sources */,
 				A8D00E65EFCE4577262038C9B4BDDE8A /* DryWechat.m in Sources */,
-				31AB491C5EA6052E258234A9B1611C1E /* DryWechatMedia.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -723,6 +728,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FF8D2C9012BCAB8835EBCB94A34F226D /* DryWechat.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -790,6 +796,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FF8D2C9012BCAB8835EBCB94A34F226D /* DryWechat.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -812,6 +819,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";

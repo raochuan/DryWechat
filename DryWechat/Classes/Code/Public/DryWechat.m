@@ -10,41 +10,44 @@
 #import "DryWechat.h"
 #import "WXApi.h"
 
-#pragma mark - 静态常量(微信授权类型)
-static NSString *const kAuthScope   = @"snsapi_message,snsapi_userinfo,snsapi_friend,snsapi_contact";
-
-#pragma mark - 单例常量
+#pragma mark - 常量
+/// 单例
 static DryWechat *theInstance = nil;
+/// 微信授权类型
+static NSString *const kAuthScope = @"snsapi_message,snsapi_userinfo,snsapi_friend,snsapi_contact";
 
 #pragma mark - DryWechat
 @interface DryWechat() <WXApiDelegate>
 
-@property (nonatomic, readwrite, assign) BOOL isRegisterSDK;//SDK是否注册成功
-
-/// 信开放平台下发数据
-@property (nonatomic, readwrite, nullable, copy) NSString *appID;//微信开放平台下发的账号
-@property (nonatomic, readwrite, nullable, copy) NSString *secret;//微信开放平台下发的账号密钥
-@property (nonatomic, readwrite, nullable, copy) NSString *partnerID;//商家向财付通申请的商家id
-@property (nonatomic, readwrite, nullable, copy) NSString *package;//商家根据财付通文档填写的数据和签名
-@property (nonatomic, readwrite, nullable, copy) NSString *partnerKey;//商户密钥
-
-/// 回调Block
-@property (nonatomic, readwrite, nullable, copy) BlockDryWechatAuth             authBlock;//授权回调
-@property (nonatomic, readwrite, nullable, copy) BlockDryWechatStatusCode       statusCodeBlock;//状态码回调
-@property (nonatomic, readwrite, nullable, copy) BlockDryWechatShareMiniProgram ShareMiniProgramBlock;//分享小程序回调
+/// 客户端是否注册成功
+@property (nonatomic, readwrite, assign) BOOL isClientRegister;
+/// 微信开放平台下发的账号
+@property (nonatomic, readwrite, copy, nullable) NSString *appID;
+/// 微信开放平台下发的账号密钥
+@property (nonatomic, readwrite, copy, nullable) NSString *secret;
+/// 商家向财付通申请的商家id
+@property (nonatomic, readwrite, copy, nullable) NSString *partnerID;
+/// 商家根据财付通文档填写的数据和签名
+@property (nonatomic, readwrite, copy, nullable) NSString *package;
+/// 商户密钥
+@property (nonatomic, readwrite, copy, nullable) NSString *partnerKey;
+/// 授权回调
+@property (nonatomic, readwrite, copy, nullable) BlockDryWechatAuth authBlock;
+/// 状态码回调
+@property (nonatomic, readwrite, copy, nullable) BlockDryWechatCode statusCodeBlock;
+/// 分享小程序回调
+@property (nonatomic, readwrite, copy, nullable) BlockDryWechatProgram openProgramBlock;
 
 @end
 
 @implementation DryWechat
 
-#pragma mark - 单例
+/// 单例
 + (instancetype)sharedInstance {
     
     if (!theInstance) {
-        
         static dispatch_once_t oncePredicate;
         dispatch_once(&oncePredicate, ^{
-            
             theInstance = [[DryWechat alloc] init];
         });
     }
@@ -52,137 +55,91 @@ static DryWechat *theInstance = nil;
     return theInstance;
 }
 
-#pragma mark - 构造
+/// 构造
 - (instancetype)init {
     
     self = [super init];
     if (self) {
         
-        /// 数据初始化
-        self.isRegisterSDK = NO;
-        
-        /// 数据初始化(信开放平台下发数据)
-        self.appID = nil;
-        self.secret = nil;
-        self.partnerID = nil;
-        self.package = nil;
-        self.partnerKey = nil;
-        
-        /// 数据初始化(回调Block)
-        self.authBlock = nil;
-        self.statusCodeBlock = nil;
-        self.ShareMiniProgramBlock = nil;
     }
     
     return self;
 }
 
-#pragma mark - 析构
+/// 析构
 - (void)dealloc {
     
-    /// 打印销毁
-    NSLog(@"已销毁: %@", NSStringFromClass(self.class));
-    
-    /// 释放属性(信开放平台下发数据)
-    self.appID = nil;
-    self.secret = nil;
-    self.partnerID = nil;
-    self.package = nil;
-    self.partnerKey = nil;
-    
-    /// 释放属性(回调Block)
-    self.authBlock = nil;
-    self.statusCodeBlock = nil;
-    self.ShareMiniProgramBlock = nil;
 }
 
-#pragma mark - 客户端配置
-/** 注册微信客户端 */
-+ (BOOL)registerWithAppID:(nonnull NSString *)appID
-                   secret:(nonnull NSString *)secret
-                partnerID:(nullable NSString *)partnerID
-               partnerKey:(nullable NSString *)partnerKey
-                  package:(nullable NSString *)package {
-    
-    /// 数据源检查
-    if (!appID || !secret) {
-        return NO;
-    }
-    
+#pragma mark - 客户端
+/// 注册微信客户端
++ (void)registerClientWithAppID:(nonnull NSString *)appID
+                         secret:(nullable NSString *)secret
+                      partnerID:(nullable NSString *)partnerID
+                     partnerKey:(nullable NSString *)partnerKey
+                        package:(nullable NSString *)package {
+
     /// 注册
-    BOOL success = [WXApi registerApp:appID];
+    [DryWechat sharedInstance].isClientRegister = [WXApi registerApp:appID];
     
     /// 保存数据
-    if (success) {
-        [DryWechat sharedInstance].isRegisterSDK = YES;
-        [DryWechat sharedInstance].appID = appID;
-        [DryWechat sharedInstance].secret = secret;
-        [DryWechat sharedInstance].partnerID = partnerID;
-        [DryWechat sharedInstance].package = package;
-        [DryWechat sharedInstance].partnerKey = partnerKey;
-    }else {
-        [DryWechat sharedInstance].isRegisterSDK = NO;
-        [DryWechat sharedInstance].appID = nil;
-        [DryWechat sharedInstance].secret = nil;
-        [DryWechat sharedInstance].partnerID = nil;
-        [DryWechat sharedInstance].package = nil;
-        [DryWechat sharedInstance].partnerKey = nil;
-    }
-    
-    return success;
+    [DryWechat sharedInstance].appID = appID;
+    [DryWechat sharedInstance].secret = secret;
+    [DryWechat sharedInstance].partnerID = partnerID;
+    [DryWechat sharedInstance].package = package;
+    [DryWechat sharedInstance].partnerKey = partnerKey;
 }
 
-/** 处理微信通过URL启动App时传递的数据 */
-+ (BOOL)handleOpenURL:(nonnull NSURL *)url {
+/// 处理微信通过URL启动App时传递的数据
++ (BOOL)handleOpenURL:(nullable NSURL *)url {
     
     if (url) {
         return [WXApi handleOpenURL:url delegate:[DryWechat sharedInstance]];
-    }else {
-        return NO;
     }
+    
+    return NO;
 }
 
-/** 微信客户端是否安装 */
+/// 微信客户端是否安装
 + (BOOL)isWXAppInstalled {
-
     return [WXApi isWXAppInstalled];
 }
 
-/** 微信客户端是否支持OpenApi */
+/// 微信客户端是否支持OpenApi
 + (BOOL)isWXAppSupportApi {
-    
     return [WXApi isWXAppSupportApi];
 }
 
-#pragma mark - 申请授权(获取: OpenID、接口凭证)
-+ (void)applyAuth:(nonnull BlockDryWechatAuth)completion {
+#pragma mark - 授权、获取用户信息
+/// 申请授权(获取: OpenID、接口凭证)
++ (void)applyAuthAt:(nonnull UIViewController *)vc completion:(nonnull BlockDryWechatAuth)completion {
     
     /// 检查数据
     if (!completion) {
         return;
     }
     
-    /// 检查(SDK是否注册)
-    if (![DryWechat sharedInstance].isRegisterSDK) {
-        completion(kDryWechatStatusCodeNoRegister, nil, nil);
-        return;
-    }
-    
-    /// 检查(客户端是否安装)
-    if (![DryWechat isWXAppInstalled]) {
-        completion(kDryWechatStatusCodeNotInstall, nil, nil);
-        return;
-    }
-    
-    /// 检查(客户端是否支持)
-    if (![DryWechat isWXAppSupportApi]) {
-        completion(kDryWechatStatusCodeUnsupport, nil, nil);
+    /// 检查(客户端是否注册成功)
+    if (![DryWechat sharedInstance].isClientRegister) {
+        completion(kDryWechatCodeNoRegister, nil, nil);
         return;
     }
     
     /// 检查(必要参数)
     if (![DryWechat sharedInstance].appID || ![DryWechat sharedInstance].secret) {
-        completion(kDryWechatStatusCodeParamsError, nil, nil);
+        completion(kDryWechatCodeParamsErr, nil, nil);
+        return;
+    }
+    
+    /// 检查(客户端是否安装)
+    if (![DryWechat isWXAppInstalled]) {
+        completion(kDryWechatCodeNotInstall, nil, nil);
+        return;
+    }
+    
+    /// 检查(客户端是否支持)
+    if (![DryWechat isWXAppSupportApi]) {
+        completion(kDryWechatCodeUnsupport, nil, nil);
         return;
     }
     
@@ -194,10 +151,10 @@ static DryWechat *theInstance = nil;
     authReq.scope = kAuthScope;
     authReq.state = [[NSBundle mainBundle] bundleIdentifier];
     authReq.openID = [DryWechat sharedInstance].appID;
-    [WXApi sendAuthReq:authReq viewController:nil delegate:[DryWechat sharedInstance]];
+    [WXApi sendAuthReq:authReq viewController:vc delegate:[DryWechat sharedInstance]];
 }
 
-#pragma mark - 获取微信的用户信息(昵称、头像地址)
+/// 获取微信的用户信息(昵称、头像地址)
 + (void)userInfoWithOpenID:(nonnull NSString *)openID
                accessToken:(nonnull NSString *)accessToken
                 completion:(nonnull BlockDryWechatUserInfo)completion {
@@ -207,9 +164,15 @@ static DryWechat *theInstance = nil;
         return;
     }
     
+    /// 检查(客户端是否注册成功)
+    if (![DryWechat sharedInstance].isClientRegister) {
+        completion(kDryWechatCodeNoRegister, nil, nil);
+        return;
+    }
+    
     /// 检查(必要参数)
     if (!openID || !accessToken) {
-        completion(kDryWechatStatusCodeParamsError, nil, nil);
+        completion(kDryWechatCodeParamsErr, nil, nil);
         return;
     }
     
@@ -218,18 +181,18 @@ static DryWechat *theInstance = nil;
     NSString *url = [NSString stringWithFormat:@"%@?access_token=%@&openid=%@", host, accessToken, openID];
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
     NSOperationQueue *queue = [NSOperationQueue mainQueue];
-    [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse * _Nullable response, NSData * _Nullable data, NSError * _Nullable connectionError) {
+    [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
         
         /// 获取数据失败
         if (!data || connectionError) {
-            completion(kDryWechatStatusCodeUnknown, nil, nil);
+            completion(kDryWechatCodeUnknown, nil, nil);
             return ;
         }
         
         /// 原始数据检查
         id json = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers | NSJSONReadingAllowFragments error:nil];
         if (!json || ![json isKindOfClass:[NSDictionary class]]) {
-            completion(kDryWechatStatusCodeUnknown, nil, nil);
+            completion(kDryWechatCodeUnknown, nil, nil);
             return;
         }
         
@@ -245,13 +208,13 @@ static DryWechat *theInstance = nil;
         }
         
         /// 返回数据
-        completion(kDryWechatStatusCodeSuccess, nickName, headImgURL);
+        completion(kDryWechatCodeSuccess, nickName, headImgURL);
     }];
 }
 
 #pragma mark - 支付
-/** 将字符串转换成MD5 */
-+ (nonnull NSString *)md5FromString:(nonnull NSString *)aString {
+/// 将字符串转换成MD5
++ (NSString *)md5FromString:(NSString *)aString {
     
     /// 转换数据
     const char *cStr = [aString UTF8String];
@@ -268,24 +231,22 @@ static DryWechat *theInstance = nil;
             result[12], result[13], result[14], result[15]];
 }
 
-/**
- * @函数说明    创建发起支付时的签名(sign)
- * @输入参数    appID:      微信开放平台下发的账号
- * @输入参数    partnerID:  商家向财付通申请的商家id
- * @输入参数    partnerKey: 商户密钥
- * @输入参数    package:    商家根据财付通文档填写的数据和签名
- * @输入参数    prepayID:   预支付订单号(服务端下发)
- * @输入参数    noncestr:   随机串(服务端下发)
- * @输入参数    timestamp:  当前时间戳
- * @返回数据    NSString
- */
-+ (nullable NSString *)signWithAppID:(nonnull NSString *)appID
-                           partnerID:(nonnull NSString *)partnerID
-                          partnerKey:(nonnull NSString *)partnerKey
-                             package:(nonnull NSString *)package
-                            prepayID:(nonnull NSString *)prepayID
-                            noncestr:(nonnull NSString *)noncestr
-                           timestamp:(UInt32)timestamp {
+/// @说明 创建发起支付时的签名(sign)
+/// @参数 appID:      微信开放平台下发的账号
+/// @参数 partnerID:  商家向财付通申请的商家id
+/// @参数 partnerKey: 商户密钥
+/// @参数 package:    商家根据财付通文档填写的数据和签名
+/// @参数 prepayID:   预支付订单号(服务端下发)
+/// @参数 noncestr:   随机串(服务端下发)
+/// @参数 timestamp:  当前时间戳
+/// @返回 NSString
++ (NSString *)signWithAppID:(NSString *)appID
+                  partnerID:(NSString *)partnerID
+                 partnerKey:(NSString *)partnerKey
+                    package:(NSString *)package
+                   prepayID:(NSString *)prepayID
+                   noncestr:(NSString *)noncestr
+                  timestamp:(UInt32)timestamp {
     
     /// 检查数据
     if (!appID || !partnerID || !partnerKey || !package || !prepayID || !noncestr) {
@@ -328,47 +289,46 @@ static DryWechat *theInstance = nil;
     return result;
 }
 
-/** 支付(调起微信客户端支付，不支持网页) */
+/// 支付(调起微信客户端支付，不支持网页)
 + (void)payWithPrepayID:(nonnull NSString *)prepayID
                noncestr:(nonnull NSString *)noncestr
-             completion:(nonnull BlockDryWechatStatusCode)completion {
+             completion:(nonnull BlockDryWechatCode)completion {
     
     /// 检查数据
     if (!completion) {
         return;
     }
     
-    /// 检查(SDK是否注册)
-    if (![DryWechat sharedInstance].isRegisterSDK) {
-        completion(kDryWechatStatusCodeNoRegister);
-        return;
-    }
-    
-    /// 检查(客户端是否安装)
-    if (![DryWechat isWXAppInstalled]) {
-        completion(kDryWechatStatusCodeNotInstall);
-        return;
-    }
-    
-    /// 检查(客户端是否支持)
-    if (![DryWechat isWXAppSupportApi]) {
-        completion(kDryWechatStatusCodeUnsupport);
+    /// 检查(客户端是否注册成功)
+    if (![DryWechat sharedInstance].isClientRegister) {
+        completion(kDryWechatCodeNoRegister);
         return;
     }
     
     /// 检查(必要参数)
     if (![DryWechat sharedInstance].appID
-        || ![DryWechat sharedInstance].secret
         || ![DryWechat sharedInstance].partnerID
         || ![DryWechat sharedInstance].package
         || ![DryWechat sharedInstance].partnerKey) {
-        completion(kDryWechatStatusCodeParamsError);
+        completion(kDryWechatCodeParamsErr);
+        return;
+    }
+    
+    /// 检查(客户端是否安装)
+    if (![DryWechat isWXAppInstalled]) {
+        completion(kDryWechatCodeNotInstall);
+        return;
+    }
+    
+    /// 检查(客户端是否支持)
+    if (![DryWechat isWXAppSupportApi]) {
+        completion(kDryWechatCodeUnsupport);
         return;
     }
     
     /// 检查(支付参数)
     if (!prepayID || !noncestr) {
-        completion(kDryWechatStatusCodeParamsError);
+        completion(kDryWechatCodeParamsErr);
         return;
     }
     
@@ -391,7 +351,7 @@ static DryWechat *theInstance = nil;
     
     /// 检查(签名)
     if (!sign) {
-        completion(kDryWechatStatusCodeParamsError);
+        completion(kDryWechatCodeParamsErr);
         return;
     }
     
@@ -408,37 +368,38 @@ static DryWechat *theInstance = nil;
     [WXApi sendReq:req];
 }
 
-#pragma mark - 分享文本信息
-+ (void)shareTextWithContent:(nonnull NSString *)content
-                       scene:(DryWechatScene)scene
-                  completion:(nonnull BlockDryWechatStatusCode)completion {
+#pragma mark - 分享
+/// 分享文本信息
++ (void)shareTextWithScene:(DryWechatScene)scene
+                      text:(nonnull NSString *)text
+                completion:(nonnull BlockDryWechatCode)completion {
     
     /// 检查数据
     if (!completion) {
         return;
     }
     
-    /// 检查(SDK是否注册)
-    if (![DryWechat sharedInstance].isRegisterSDK) {
-        completion(kDryWechatStatusCodeNoRegister);
+    /// 检查(客户端是否注册成功)
+    if (![DryWechat sharedInstance].isClientRegister) {
+        completion(kDryWechatCodeNoRegister);
         return;
     }
     
     /// 检查(客户端是否安装)
     if (![DryWechat isWXAppInstalled]) {
-        completion(kDryWechatStatusCodeNotInstall);
+        completion(kDryWechatCodeNotInstall);
         return;
     }
     
     /// 检查(客户端是否支持)
     if (![DryWechat isWXAppSupportApi]) {
-        completion(kDryWechatStatusCodeUnsupport);
+        completion(kDryWechatCodeUnsupport);
         return;
     }
     
     /// 检查(分享参数)
-    if (!content) {
-        completion(kDryWechatStatusCodeParamsError);
+    if (!text) {
+        completion(kDryWechatCodeParamsErr);
         return;
     }
     
@@ -448,7 +409,7 @@ static DryWechat *theInstance = nil;
     /// 分享文本信息 */
     SendMessageToWXReq *req = [[SendMessageToWXReq alloc] init];
     req.bText = YES;
-    req.text = content;
+    req.text = text;
     if (scene == kDryWechatScenePerson) {
         req.scene = WXSceneSession;
     }else if (scene == kDryWechatSceneTimeline) {
@@ -459,38 +420,41 @@ static DryWechat *theInstance = nil;
     [WXApi sendReq:req];
 }
 
-#pragma mark - 分享多媒体信息
-+ (void)shareMediaWithType:(DryWechatMediaType)type
-                     media:(nonnull DryWechatMedia *)media
-                     scene:(DryWechatScene)scene
-                completion:(nonnull BlockDryWechatStatusCode)completion {
+/// 分享多媒体信息
++ (void)shareMediaWithScene:(DryWechatScene)scene
+                      title:(nullable NSString *)title
+                    descrip:(nullable NSString *)descrip
+                 thumbImage:(nullable UIImage *)thumbImage
+                  mediaType:(DryWechatMediaType)mediaType
+                      media:(nonnull DryWechatMedia *)media
+                 completion:(nonnull BlockDryWechatCode)completion {
     
     /// 检查(参数)
     if (!completion) {
         return;
     }
     
-    /// 检查(SDK是否注册)
-    if (![DryWechat sharedInstance].isRegisterSDK) {
-        completion(kDryWechatStatusCodeNoRegister);
+    /// 检查(客户端是否注册成功)
+    if (![DryWechat sharedInstance].isClientRegister) {
+        completion(kDryWechatCodeNoRegister);
         return;
     }
     
     /// 检查(客户端是否安装)
     if (![DryWechat isWXAppInstalled]) {
-        completion(kDryWechatStatusCodeNotInstall);
+        completion(kDryWechatCodeNotInstall);
         return;
     }
     
     /// 检查(客户端是否支持)
     if (![DryWechat isWXAppSupportApi]) {
-        completion(kDryWechatStatusCodeUnsupport);
+        completion(kDryWechatCodeUnsupport);
         return;
     }
     
     /// 检查(分享参数)
     if (!media) {
-        completion(kDryWechatStatusCodeParamsError);
+        completion(kDryWechatCodeParamsErr);
         return;
     }
     
@@ -523,7 +487,7 @@ static DryWechat *theInstance = nil;
     }
     
     /// 根据多媒体类型配置数据
-    if (type == kDryWechatMediaTypeImage) {
+    if (mediaType == kDryWechatMediaTypeImage) {
         
         /// 图片
         WXImageObject *mediaObject = [WXImageObject object];
@@ -532,7 +496,7 @@ static DryWechat *theInstance = nil;
         }
         targetMessage.mediaObject = mediaObject;
         
-    }else if (type == kDryWechatMediaTypeMusic) {
+    }else if (mediaType == kDryWechatMediaTypeMusic) {
         
         /// 音乐
         WXMusicObject *mediaObject = [WXMusicObject object];
@@ -550,7 +514,7 @@ static DryWechat *theInstance = nil;
         }
         targetMessage.mediaObject = mediaObject;
         
-    }else if (type == kDryWechatMediaTypeVideo) {
+    }else if (mediaType == kDryWechatMediaTypeVideo) {
         
         /// 视频
         WXVideoObject *mediaObject = [WXVideoObject object];
@@ -562,7 +526,7 @@ static DryWechat *theInstance = nil;
         }
         targetMessage.mediaObject = mediaObject;
         
-    }else if (type == kDryWechatMediaTypeWebpage) {
+    }else if (mediaType == kDryWechatMediaTypeWebpage) {
         
         /// 网页
         WXWebpageObject *mediaObject = [WXWebpageObject object];
@@ -571,7 +535,7 @@ static DryWechat *theInstance = nil;
         }
         targetMessage.mediaObject = mediaObject;
         
-    }else if (type == kDryWechatMediaTypeAppExtend) {
+    }else if (mediaType == kDryWechatMediaTypeAppExtend) {
         
         /// App扩展
         WXAppExtendObject *mediaObject = [WXAppExtendObject object];
@@ -586,7 +550,7 @@ static DryWechat *theInstance = nil;
         }
         targetMessage.mediaObject = mediaObject;
         
-    }else if (type == kDryWechatMediaTypeEmoticon) {
+    }else if (mediaType == kDryWechatMediaTypeEmoticon) {
         
         /// 表情
         WXEmoticonObject *mediaObject = [WXEmoticonObject object];
@@ -595,7 +559,7 @@ static DryWechat *theInstance = nil;
         }
         targetMessage.mediaObject = mediaObject;
         
-    }else if (type == kDryWechatMediaTypeFile) {
+    }else if (mediaType == kDryWechatMediaTypeFile) {
         
         /// 文件
         WXFileObject *mediaObject = [WXFileObject object];
@@ -607,7 +571,7 @@ static DryWechat *theInstance = nil;
         }
         targetMessage.mediaObject = mediaObject;
         
-    }else if (type == kDryWechatMediaTypeLocation) {
+    }else if (mediaType == kDryWechatMediaTypeLocation) {
         
         /// 地理位置
         WXLocationObject *mediaObject = [WXLocationObject object];
@@ -619,7 +583,7 @@ static DryWechat *theInstance = nil;
         }
         targetMessage.mediaObject = mediaObject;
         
-    }else if (type == kDryWechatMediaTypeText) {
+    }else if (mediaType == kDryWechatMediaTypeText) {
         
         /// 文本
         WXTextObject *mediaObject = [WXTextObject object];
@@ -628,7 +592,8 @@ static DryWechat *theInstance = nil;
         }
         targetMessage.mediaObject = mediaObject;
     }
-    
+
+    /// 设置分享多媒体对象
     req.message = targetMessage;
     
     /// 分享多媒体信息
@@ -636,60 +601,60 @@ static DryWechat *theInstance = nil;
 }
 
 #pragma mark - 打开微信小程序
-+ (void)shareMiniWithUserName:(nonnull NSString *)userName
-                         path:(nullable NSString *)path
-                         type:(DryWechatMiniProgramType)type
-                   completion:(nonnull BlockDryWechatShareMiniProgram)completion {
++ (void)openProgramWithUserName:(nonnull NSString *)userName
+                           path:(nullable NSString *)path
+                           type:(DryWechatProgram)type
+                     completion:(nonnull BlockDryWechatProgram)completion {
     
     /// 检查(参数)
     if (!completion) {
         return;
     }
     
-    /// 检查(SDK是否注册)
-    if (![DryWechat sharedInstance].isRegisterSDK) {
-        completion(kDryWechatStatusCodeNoRegister, nil);
+    /// 检查(客户端是否注册成功)
+    if (![DryWechat sharedInstance].isClientRegister) {
+        completion(kDryWechatCodeNoRegister, nil);
         return;
     }
     
     /// 检查(客户端是否安装)
     if (![DryWechat isWXAppInstalled]) {
-        completion(kDryWechatStatusCodeNotInstall, nil);
+        completion(kDryWechatCodeNotInstall, nil);
         return;
     }
     
     /// 检查(客户端是否支持)
     if (![DryWechat isWXAppSupportApi]) {
-        completion(kDryWechatStatusCodeUnsupport, nil);
+        completion(kDryWechatCodeUnsupport, nil);
         return;
     }
     
     /// 检查(参数)
     if (!userName) {
-        completion(kDryWechatStatusCodeParamsError, nil);
+        completion(kDryWechatCodeParamsErr, nil);
         return;
     }
     
     /// 更新Block
-    [DryWechat sharedInstance].ShareMiniProgramBlock = completion;
+    [DryWechat sharedInstance].openProgramBlock = completion;
     
-    /// 发送请求
+    /// 创建请求
     WXLaunchMiniProgramReq *launchMiniProgramReq = [WXLaunchMiniProgramReq object];
     launchMiniProgramReq.userName = userName;
+    
     if (path) {
         launchMiniProgramReq.path = path;
     }
-    switch (type) {
-        case kDryWechatMiniProgramTypeTest:{
-            launchMiniProgramReq.miniProgramType = WXMiniProgramTypeTest;
-        }break;
-        case kDryWechatMiniProgramTypePreview:{
-            launchMiniProgramReq.miniProgramType = WXMiniProgramTypePreview;
-        }break;
-        default:{
-            launchMiniProgramReq.miniProgramType = WXMiniProgramTypeRelease;
-        }break;
+    
+    if (type == kDryWechatProgramTest) {
+        launchMiniProgramReq.miniProgramType = WXMiniProgramTypeTest;
+    }else if (type == kDryWechatProgramPreview) {
+        launchMiniProgramReq.miniProgramType = WXMiniProgramTypePreview;
+    }else {
+        launchMiniProgramReq.miniProgramType = WXMiniProgramTypeRelease;
     }
+    
+    /// 打开小程序
     [WXApi sendReq:launchMiniProgramReq];
 }
 
@@ -722,8 +687,7 @@ static DryWechat *theInstance = nil;
     }
 }
 
-#pragma mark - 微信回调(处理)
-/** 授权回调处理 */
+/// 授权回调处理
 + (void)authCallbackWithResp:(nonnull SendAuthResp *)resp {
     
     /// 检查(参数)
@@ -738,7 +702,7 @@ static DryWechat *theInstance = nil;
     
     /// 检查(数据)
     if (![DryWechat sharedInstance].appID || ![DryWechat sharedInstance].secret) {
-        [DryWechat sharedInstance].authBlock(kDryWechatStatusCodeParamsError, nil, nil);
+        [DryWechat sharedInstance].authBlock(kDryWechatCodeParamsErr, nil, nil);
         return;
     }
     
@@ -759,7 +723,7 @@ static DryWechat *theInstance = nil;
             
             /// 获取数据失败
             if (!data || connectionError) {
-                [DryWechat sharedInstance].authBlock(kDryWechatStatusCodeUnknown, nil, nil);
+                [DryWechat sharedInstance].authBlock(kDryWechatCodeUnknown, nil, nil);
                 return ;
             }
             
@@ -768,7 +732,7 @@ static DryWechat *theInstance = nil;
             
             /// 原始数据检查
             if (!jsonObect || ![jsonObect isKindOfClass:[NSDictionary class]]) {
-                [DryWechat sharedInstance].authBlock(kDryWechatStatusCodeUnknown, nil, nil);
+                [DryWechat sharedInstance].authBlock(kDryWechatCodeUnknown, nil, nil);
                 return;
             }
             
@@ -788,7 +752,7 @@ static DryWechat *theInstance = nil;
             }
             
             /// 返回数据
-            [DryWechat sharedInstance].authBlock(kDryWechatStatusCodeSuccess, openID, accessToken);
+            [DryWechat sharedInstance].authBlock(kDryWechatCodeSuccess, openID, accessToken);
         }];
         
     }else {
@@ -796,25 +760,25 @@ static DryWechat *theInstance = nil;
         /// 授权失败
         switch (statusCode) {
             case WXErrCodeSentFail:{
-                [DryWechat sharedInstance].authBlock(kDryWechatStatusCodeSendFail, nil, nil);
+                [DryWechat sharedInstance].authBlock(kDryWechatCodeSendFail, nil, nil);
             }break;
             case WXErrCodeAuthDeny:{
-                [DryWechat sharedInstance].authBlock(kDryWechatStatusCodeAuthDeny, nil, nil);
+                [DryWechat sharedInstance].authBlock(kDryWechatCodeAuthDeny, nil, nil);
             }break;
             case WXErrCodeUnsupport:{
-                [DryWechat sharedInstance].authBlock(kDryWechatStatusCodeUnsupport, nil, nil);
+                [DryWechat sharedInstance].authBlock(kDryWechatCodeUnsupport, nil, nil);
             }break;
             case WXErrCodeUserCancel:{
-                [DryWechat sharedInstance].authBlock(kDryWechatStatusCodeUserCancel, nil, nil);
+                [DryWechat sharedInstance].authBlock(kDryWechatCodeUserCancel, nil, nil);
             }break;
             default:{
-                [DryWechat sharedInstance].authBlock(kDryWechatStatusCodeUnknown, nil, nil);
+                [DryWechat sharedInstance].authBlock(kDryWechatCodeUnknown, nil, nil);
             }break;
         }
     }
 }
 
-/** 支付回调处理 */
+/// 支付回调处理
 + (void)payCallbackWithResp:(nonnull PayResp *)resp {
     
     /// 检查(参数)
@@ -831,27 +795,27 @@ static DryWechat *theInstance = nil;
     NSInteger statusCode = resp.errCode;
     switch (statusCode) {
         case WXSuccess:{
-            [DryWechat sharedInstance].statusCodeBlock(kDryWechatStatusCodeSuccess);
+            [DryWechat sharedInstance].statusCodeBlock(kDryWechatCodeSuccess);
         }break;
         case WXErrCodeSentFail:{
-            [DryWechat sharedInstance].statusCodeBlock(kDryWechatStatusCodeSendFail);
+            [DryWechat sharedInstance].statusCodeBlock(kDryWechatCodeSendFail);
         }break;
         case WXErrCodeAuthDeny:{
-            [DryWechat sharedInstance].statusCodeBlock(kDryWechatStatusCodeAuthDeny);
+            [DryWechat sharedInstance].statusCodeBlock(kDryWechatCodeAuthDeny);
         }break;
         case WXErrCodeUnsupport:{
-            [DryWechat sharedInstance].statusCodeBlock(kDryWechatStatusCodeUnsupport);
+            [DryWechat sharedInstance].statusCodeBlock(kDryWechatCodeUnsupport);
         }break;
         case WXErrCodeUserCancel:{
-            [DryWechat sharedInstance].statusCodeBlock(kDryWechatStatusCodeUserCancel);
+            [DryWechat sharedInstance].statusCodeBlock(kDryWechatCodeUserCancel);
         }break;
         default:{
-            [DryWechat sharedInstance].statusCodeBlock(kDryWechatStatusCodeUnknown);
+            [DryWechat sharedInstance].statusCodeBlock(kDryWechatCodeUnknown);
         }break;
     }
 }
 
-/** 分享回调处理 */
+/// 分享回调处理
 + (void)shareCallbackWithResp:(nonnull SendMessageToWXResp *)resp {
     
     /// 检查(参数)
@@ -868,27 +832,27 @@ static DryWechat *theInstance = nil;
     NSInteger statusCode = resp.errCode;
     switch (statusCode) {
         case WXSuccess:{
-            [DryWechat sharedInstance].statusCodeBlock(kDryWechatStatusCodeSuccess);
+            [DryWechat sharedInstance].statusCodeBlock(kDryWechatCodeSuccess);
         }break;
         case WXErrCodeSentFail:{
-            [DryWechat sharedInstance].statusCodeBlock(kDryWechatStatusCodeSendFail);
+            [DryWechat sharedInstance].statusCodeBlock(kDryWechatCodeSendFail);
         }break;
         case WXErrCodeAuthDeny:{
-            [DryWechat sharedInstance].statusCodeBlock(kDryWechatStatusCodeAuthDeny);
+            [DryWechat sharedInstance].statusCodeBlock(kDryWechatCodeAuthDeny);
         }break;
         case WXErrCodeUnsupport:{
-            [DryWechat sharedInstance].statusCodeBlock(kDryWechatStatusCodeUnsupport);
+            [DryWechat sharedInstance].statusCodeBlock(kDryWechatCodeUnsupport);
         }break;
         case WXErrCodeUserCancel:{
-            [DryWechat sharedInstance].statusCodeBlock(kDryWechatStatusCodeUserCancel);
+            [DryWechat sharedInstance].statusCodeBlock(kDryWechatCodeUserCancel);
         }break;
         default:{
-            [DryWechat sharedInstance].statusCodeBlock(kDryWechatStatusCodeUnknown);
+            [DryWechat sharedInstance].statusCodeBlock(kDryWechatCodeUnknown);
         }break;
     }
 }
 
-/** 分享微信小程序回调处理 */
+/// 打开微信小程序回调处理
 + (void)shareMiniProgramCallbackWithResp:(nonnull WXLaunchMiniProgramResp *)resp {
     
     /// 检查(参数)
@@ -897,14 +861,14 @@ static DryWechat *theInstance = nil;
     }
     
     /// 检查(数据)
-    if (![DryWechat sharedInstance].ShareMiniProgramBlock) {
+    if (![DryWechat sharedInstance].openProgramBlock) {
         return;
     }
     
     /// 小程序回调
     NSInteger statusCode = resp.errCode;
     NSString *msg = resp.extMsg;
-    [DryWechat sharedInstance].ShareMiniProgramBlock(statusCode, msg);
+    [DryWechat sharedInstance].openProgramBlock(statusCode, msg);
 }
 
 @end
