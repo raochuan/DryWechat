@@ -1,0 +1,6 @@
+framework module Pods_DryWechat_Tests {
+  umbrella header "Pods-DryWechat_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}

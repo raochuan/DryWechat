@@ -1,0 +1,23 @@
+PODS:
+  - DryWechat (0.0.1):
+    - WechatOpenSDK
+  - WechatOpenSDK (1.8.4)
+
+DEPENDENCIES:
+  - DryWechat (from `../`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - WechatOpenSDK
+
+EXTERNAL SOURCES:
+  DryWechat:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  DryWechat: e0aabb2fc0c943f32a423bbc4bbd29d447fdad89
+  WechatOpenSDK: 9b721089507c895d05f997408c30bb6e6f5f9b60
+
+PODFILE CHECKSUM: 8ba1ed3c84839bf5423db4af253214fcb165b757
+
+COCOAPODS: 1.6.1

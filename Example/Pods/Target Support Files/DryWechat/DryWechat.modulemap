@@ -1,0 +1,6 @@
+framework module DryWechat {
+  umbrella header "DryWechat-umbrella.h"
+
+  export *
+  module * { export * }
+}
